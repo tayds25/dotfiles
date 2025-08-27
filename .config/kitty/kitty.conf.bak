@@ -1,0 +1,17 @@
+# BEGIN_KITTY_THEME
+# Everforest Dark Soft
+include current-theme.conf
+# END_KITTY_THEME
+
+# Font
+font_family      JetBrainsMono Nerd Font
+font_size        12.0
+
+# Window
+background_opacity 0.92
+
+# Scrollback
+scrollback_lines 10000
+
+# Kitty’s graphics protocol for Yazi
+enable_audio_bell no

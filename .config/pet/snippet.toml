@@ -1,0 +1,30 @@
+
+[[Snippets]]
+  Description = "Configure FastFetch"
+  Output = ""
+  Tag = []
+  command = "micro ~/.config/fastfetch/config.jsonc"
+
+[[Snippets]]
+  Description = "Set brightness for monitor"
+  Output = ""
+  Tag = []
+  command = "xrandr --output DisplayPort-1 --brightness <0-1>"
+
+[[Snippets]]
+  Description = "ASUS Control Options"
+  Output = ""
+  Tag = []
+  command = "asusctl --help"
+
+[[Snippets]]
+  Description = "Manage ASUS GPU"
+  Output = ""
+  Tag = []
+  command = "supergfxctl -h"
+
+[[Snippets]]
+  Description = "Find Packages"
+  Output = ""
+  Tag = []
+  command = "apt-cache search . | fzf --preview 'apt-cache show {1}'"
