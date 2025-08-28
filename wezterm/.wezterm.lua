@@ -126,6 +126,7 @@ config.scrollback_lines = 10000
 config.audible_bell = 'Disabled'
 config.window_close_confirmation = 'NeverPrompt'
 config.hide_tab_bar_if_only_one_tab = true
+config.pane_focus_follows_mouse = true
 
 -- === Performance ===
 config.max_fps = 200
@@ -137,39 +138,55 @@ config.webgpu_power_preference = "HighPerformance"
 -- === Keybindings ===
 local act = wezterm.action
 
+config.leader = {
+    key = 'a',
+    mods = 'CTRL',
+    timeout_milliseconds = 2000,
+}
+
 config.keys = {
     -- === Tab Management ===
     -- Create new tab
     { key = 't', mods = 'CTRL|SHIFT', action = act.SpawnTab 'CurrentPaneDomain' },
     -- Close current tab
     { key = 'q', mods = 'CTRL|SHIFT', action = act.CloseCurrentTab { confirm = false } },
+    -- TO BE IMPLEMENTED
+    -- Rename tab
+    -- { key = 'r', mods = 'LEADER', action = act.PromptInputLine {
+    --     description = "New tab name: ",
+    --     action = wezterm.action_callback(
+    --         function(window, pane, line)
+    --             if line then
+    --                 window:active_tab():set_title(line)
+    --             end
+    --         end
+    --     )
+    -- } },
+
     -- Navigate tabs
-    { key = '1', mods = 'CTRL|SHIFT', action = act.ActivateTab(0) },
-    { key = '2', mods = 'CTRL|SHIFT', action = act.ActivateTab(1) },
-    { key = '3', mods = 'CTRL|SHIFT', action = act.ActivateTab(2) },
-    { key = '4', mods = 'CTRL|SHIFT', action = act.ActivateTab(3) },
-    { key = '5', mods = 'CTRL|SHIFT', action = act.ActivateTab(4) },
-    { key = '6', mods = 'CTRL|SHIFT', action = act.ActivateTab(5) },
-    { key = '7', mods = 'CTRL|SHIFT', action = act.ActivateTab(6) },
-    { key = '8', mods = 'CTRL|SHIFT', action = act.ActivateTab(7) },
-    { key = '9', mods = 'CTRL|SHIFT', action = act.ActivateTab(8) },
+    { key = 'w', mods = 'LEADER', action = act.ShowTabNavigator },
     -- Next/Previous tab
     { key = 'Tab', mods = 'CTRL', action = act.ActivateTabRelative(1) },
     { key = 'Tab', mods = 'SHIFT|CTRL', action = act.ActivateTabRelative(-1) },
 
     -- === Pane Management ===
     -- Split panes
-    { key = 'd', mods = 'CTRL|SHIFT', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
-    { key = 's', mods = 'CTRL|SHIFT', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
-    -- Navigate panes (CTRL|SHIFT + vim keys)
-    { key = 'h', mods = 'CTRL|SHIFT', action = act.ActivatePaneDirection 'Left' },
-    { key = 'l', mods = 'CTRL|SHIFT', action = act.ActivatePaneDirection 'Right' },
-    { key = 'k', mods = 'CTRL|SHIFT', action = act.ActivatePaneDirection 'Up' },
-    { key = 'j', mods = 'CTRL|SHIFT', action = act.ActivatePaneDirection 'Down' },
+    { key = 'v', mods = 'LEADER', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
+    { key = 'h', mods = 'LEADER', action = act.SplitVertical { domain = 'CurrentPaneDomain' } },
+    -- Navigate panes (CTRL + vim keys)
+    { key = 'h', mods = 'CTRL', action = act.ActivatePaneDirection 'Left' },
+    { key = 'l', mods = 'CTRL', action = act.ActivatePaneDirection 'Right' },
+    { key = 'k', mods = 'CTRL', action = act.ActivatePaneDirection 'Up' },
+    { key = 'j', mods = 'CTRL', action = act.ActivatePaneDirection 'Down' },
+    -- Resize panes (ALT + vim keys)
+    { key = 'h', mods = 'ALT', action = act.AdjustPaneSize { 'Left', 1 } },
+    { key = 'l', mods = 'ALT', action = act.AdjustPaneSize { 'Right', 1 } },
+    { key = 'k', mods = 'ALT', action = act.AdjustPaneSize { 'Up', 1 } },
+    { key = 'j', mods = 'ALT', action = act.AdjustPaneSize { 'Down', 1 } },
     -- Close pane
-    { key = 'x', mods = 'CTRL|SHIFT', action = act.CloseCurrentPane { confirm = false } },
+    { key = 'q', mods = 'LEADER', action = act.CloseCurrentPane { confirm = false } },
     -- Toggle pane zoom
-    { key = 'z', mods = 'CTRL|SHIFT', action = act.TogglePaneZoomState },
+    { key = 'f', mods = 'ALT', action = act.TogglePaneZoomState },
 
     -- === Font Size ===
     -- Zoom in/out
@@ -186,9 +203,7 @@ config.keys = {
 
     -- === Quick Actions ===
     -- Clear screen
-    { key = 'k', mods = 'CTRL|SHIFT', action = act.ClearScrollback 'ScrollbackAndViewport' },
-    -- New window
-    { key = 'n', mods = 'CTRL|SHIFT', action = act.SpawnWindow },
+    { key = 'k', mods = 'CTRL|ALT', action = act.ClearScrollback 'ScrollbackAndViewport' },
     -- Show launcher (command palette)
     { key = 'p', mods = 'CTRL|SHIFT', action = act.ShowLauncher },
     -- Toggle fullscreen

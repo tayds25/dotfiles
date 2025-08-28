@@ -69,7 +69,7 @@ return {
             keymap.set("n", "K", vim.lsp.buf.hover, opts)
 
             opts.desc = "Show signature help"
-            keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
+            keymap.set("n", "<leader>rh", vim.lsp.buf.signature_help, opts)
 
             -- Workspace
             opts.desc = "Show LSP workspace symbols"
