@@ -16,6 +16,10 @@ My personal configuration files managed with [GNU Stow](https://www.gnu.org/soft
 
 - Everforest  Theme
 
+## Screenshots
+
+![Screenshot](screenshot.png)
+
 ## Structure
 
 This repository is organized into packages, each containing related configuration files:
