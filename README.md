@@ -10,7 +10,7 @@ My personal configuration files managed with [GNU Stow](https://www.gnu.org/soft
 
 **TUIs:** Calcure, Dooit, Yazi
 
-**Others:** Neovim, Fastfetch, Pet
+**Others:** Neovim, Fastfetch, Pet, Starship
 
 ## 🎨 Features
 

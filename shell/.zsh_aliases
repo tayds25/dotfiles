@@ -99,7 +99,6 @@ alias treed='tree -CAFd'                   # Tree view (directories only)
 
 # Development tools
 alias nv='nvim'                            # Use neovim instead of vi
-alias vim='nvim'                           # Use neovim instead of vim
 alias nano='micro'                         # Use micro instead of nano
 alias svi='sudo nvim'                      # Sudo vi
 alias spico='sudo pico'                    # Sudo pico

@@ -130,15 +130,20 @@ export LESS_TERMCAP_so=$'\E[01;44;33m' # Begin standout-mode
 export LESS_TERMCAP_ue=$'\E[0m'        # End underline
 export LESS_TERMCAP_us=$'\E[01;32m'    # Begin underline
 
-# FZF default options
-export FZF_DEFAULT_OPTS="--ansi --height 80% --layout=reverse --border"
+# FZF default options with Everforest Dark Hard theme (matching WezTerm)
+export FZF_DEFAULT_OPTS="--ansi --height 80% --layout=reverse --border \
+--color=fg:#d3c6aa,bg:-1,hl:#a7c080 \
+--color=fg+:#d3c6aa,bg+:#464e53,hl+:#a7c080 \
+--color=info:#dbbc7f,prompt:#a7c080,pointer:#E69875 \
+--color=marker:#83c092,spinner:#7fbbb3,header:#7fbbb3 \
+--color=border:#868d80,gutter:-1"
 
 # =============================================================================
 # LOAD ALIASES AND FUNCTIONS
 # =============================================================================
 
 # Source aliases and functions from separate file
-[[ -f "$HOME/dotfiles/.zsh_aliases" ]] && source "$HOME/dotfiles/.zsh_aliases"
+[[ -f "$HOME/dotfiles/shell/.zsh_aliases" ]] && source "$HOME/dotfiles/shell/.zsh_aliases"
 
 # =============================================================================
 # ESSENTIAL ZSH PLUGINS
@@ -184,7 +189,10 @@ load_plugin "fzf-tab" "https://github.com/Aloxaf/fzf-tab.git"
 # 4. Better history substring search
 load_plugin "zsh-history-substring-search" "https://github.com/zsh-users/zsh-history-substring-search.git"
 
-# 5. Syntax highlighting (must be loaded last among plugins)
+# 5. Alias reminder plugin
+load_plugin "zsh-you-should-use" "https://github.com/MichaelAquilina/zsh-you-should-use.git"
+
+# 6. Syntax highlighting (must be loaded last among plugins)
 load_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting.git"
 
 
@@ -194,6 +202,10 @@ load_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-h
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#666666,underline"
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+
+# You Should Use plugin configuration
+export YSU_MESSAGE_POSITION="after"
+export YSU_MESSAGE_FORMAT="$(tput setaf 1)Hey! You have an alias for that: $(tput bold;tput setaf 3)%alias$(tput sgr0)"
 
 # Ensure colors match using FZF_DEFAULT_OPTS
 zstyle ":fzf-tab:*" use-fzf-default-opts yes
@@ -245,7 +257,7 @@ if command -v starship &> /dev/null; then
 fi
 
 # Fzf and Zsh
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f ~/dotfiles/shell/.fzf.zsh ] && source ~/dotfiles/shell/.fzf.zsh
 
 
 # =============================================================================
@@ -304,4 +316,3 @@ bindkey '^[[F' end-of-line                     # End key
 # Accept autosuggestion
 bindkey '^ ' autosuggest-accept                # Ctrl+Space
 bindkey '^[[Z' reverse-menu-complete           # Shift+Tab for reverse completion
-
