@@ -247,7 +247,7 @@ config.keys = {
     -- Clear screen
     { key = 'k', mods = 'CTRL|ALT', action = act.ClearScrollback 'ScrollbackAndViewport' },
     -- Show launcher (command palette)
-    { key = 'p', mods = 'CTRL|SHIFT', action = act.ShowLauncher },
+    { key = 'p', mods = 'CTRL|SHIFT', action = act.ActivateCommandPalette },
     -- Toggle fullscreen
     { key = 'F11', action = act.ToggleFullScreen },
 
