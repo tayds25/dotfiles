@@ -29,35 +29,6 @@ wezterm.on("smart_workspace_switcher.workspace_switcher.selected", function(wind
 end)
 
 
--- Add the selected path to the right status bar when choosing a workspace
-wezterm.on("smart_workspace_switcher.workspace_switcher.chosen", function(window, workspace)
-    local gui_win = window:gui_window()
-    local base_path = string.gsub(workspace, "(.*[/\\])(.*)", "%2")
-    gui_win:set_right_status(wezterm.format({
-        { Foreground = { Color = "green" } },
-        { Text = base_path .. "  " },
-    }))
-end)
-
-wezterm.on("smart_workspace_switcher.workspace_switcher.created", function(window, workspace)
-    local gui_win = window:gui_window()
-    local base_path = string.gsub(workspace, "(.*[/\\])(.*)", "%2")
-    gui_win:set_right_status(wezterm.format({
-        { Foreground = { Color = "green" } },
-        { Text = base_path .. "  " },
-    }))
-end)
-
--- Workspace Formatter
-workspace_switcher.workspace_formatter = function(label)
-    return wezterm.format({
-        { Attribute = { Italic = true } },
-        { Foreground = { Color = "#a7c080" } },
-        { Text = "󱂬: " .. label },
-    })
-end
-
-
 -- === Appearance & Theme ===
 config.window_background_opacity = 0.9
 config.window_padding = {
@@ -282,7 +253,7 @@ config.keys = {
         }),
     },
 
-    -- To delete a workspace, do not hit ctrl+s when leaving a workspace
+    -- To delete a workspace, close the window without leaving the workspace
 }
 
 return config
