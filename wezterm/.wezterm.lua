@@ -242,17 +242,6 @@ config.keys = {
     { key = 't', mods = 'CTRL|SHIFT', action = act.SpawnTab 'CurrentPaneDomain' },
     -- Close current tab
     { key = 'q', mods = 'CTRL|SHIFT', action = act.CloseCurrentTab { confirm = false } },
-    -- TO BE IMPLEMENTED
-    -- Rename tab
-    -- { key = 'r', mods = 'LEADER', action = act.PromptInputLine {
-    --     description = 'Enter new name for tab',
-    --     action = wezterm.action_callback(function(window, pane, line)
-    --         if line then
-    --             window:active_tab():set_title(line)
-    --         end
-    --     end),
-    --     },
-    -- },
 
     -- Navigate tabs
     { key = 't', mods = 'LEADER', action = act.ShowTabNavigator },
@@ -348,7 +337,7 @@ config.keys = {
     }},
 
     -- Rename workspace
-    { key = 'r', mods = 'CTRL|SHIFT', action = wezterm.action.PromptInputLine({
+    { key = 'r', mods = 'LEADER', action = wezterm.action.PromptInputLine({
         description = "Enter new name for workspace",
         action = wezterm.action_callback(function(window, pane, line)
             if line then
