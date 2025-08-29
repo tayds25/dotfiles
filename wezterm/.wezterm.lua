@@ -10,6 +10,44 @@ config.default_prog = { "/bin/zsh" }
 
 -- === Plugin Configuration ===
 
+-- Add entries in command palette for renaming and switching workspaces
+wezterm.on("augment-command-palette", function(window, pane)
+    local workspace_state = resurrect.workspace_state
+    return {
+        {
+        brief = "Window | Workspace: Switch Workspace",
+        icon = "md_briefcase_arrow_up_down",
+        action = workspace_switcher.switch_workspace(),
+        },
+        {
+        brief = "Window | Workspace: Rename Workspace",
+        icon = "md_briefcase_edit",
+        action = wezterm.action.PromptInputLine({
+            description = "Enter new name for workspace",
+            action = wezterm.action_callback(function(window, pane, line)
+            if line then
+                wezterm.mux.rename_workspace(wezterm.mux.get_active_workspace(), line)
+                resurrect.state_manager.save_state(workspace_state.get_workspace_state())
+            end
+            end),
+        }),
+        },
+        {
+        brief = 'Rename tab',
+        icon = 'md_rename_box',
+        action = wezterm.action.PromptInputLine {
+            description = 'Enter new name for tab',
+            initial_value = 'My Tab Name',
+            action = wezterm.action_callback(function(window, pane, line)
+            if line then
+                window:active_tab():set_title(line)
+            end
+            end),
+        },
+        },
+    }
+end)
+
 -- loads the state whenever I create a new workspace
 wezterm.on("smart_workspace_switcher.workspace_switcher.created", function(window, path, label)
     local workspace_state = resurrect.workspace_state
@@ -28,30 +66,6 @@ wezterm.on("smart_workspace_switcher.workspace_switcher.selected", function(wind
     resurrect.state_manager.save_state(workspace_state.get_workspace_state())
 end)
 
--- Add entries in command palette for renaming and switching workspaces
-wezterm.on("augment-command-palette", function(window, pane)
-    local workspace_state = resurrect.workspace_state
-    return {
-        {
-            brief = "Window | Workspace: Switch Workspace",
-            icon = "md_briefcase_arrow_up_down",
-            action = workspace_switcher.switch_workspace(),
-        },
-        {
-            brief = "Window | Workspace: Rename Workspace",
-            icon = "md_briefcase_edit",
-            action = wezterm.action.PromptInputLine({
-                description = "Enter new name for workspace",
-                action = wezterm.action_callback(function(window, pane, line)
-                    if line then
-                        wezterm.mux.rename_workspace(wezterm.mux.get_active_workspace(), line)
-                        resurrect.state_manager.save_state(workspace_state.get_workspace_state())
-                    end
-                end),
-            }),
-        },
-    }
-end)
 
 -- Add the selected path to the right status bar when choosing a workspace
 wezterm.on("smart_workspace_switcher.workspace_switcher.chosen", function(window, workspace)
@@ -76,7 +90,7 @@ end)
 workspace_switcher.workspace_formatter = function(label)
     return wezterm.format({
         { Attribute = { Italic = true } },
-        { Foreground = { Color = "#272e33" } },
+        { Foreground = { Color = "#a7c080" } },
         { Text = "󱂬: " .. label },
     })
 end
@@ -231,15 +245,14 @@ config.keys = {
     -- TO BE IMPLEMENTED
     -- Rename tab
     -- { key = 'r', mods = 'LEADER', action = act.PromptInputLine {
-    --     description = "New tab name: ",
-    --     action = wezterm.action_callback(
-    --         function(window, pane, line)
-    --             if line then
-    --                 window:active_tab():set_title(line)
-    --             end
+    --     description = 'Enter new name for tab',
+    --     action = wezterm.action_callback(function(window, pane, line)
+    --         if line then
+    --             window:active_tab():set_title(line)
     --         end
-    --     )
-    -- } },
+    --     end),
+    --     },
+    -- },
 
     -- Navigate tabs
     { key = 't', mods = 'LEADER', action = act.ShowTabNavigator },
@@ -297,6 +310,55 @@ config.keys = {
 
     -- === Workspace Management ===
 
+    -- Create new workspace
+    { key = 'w', mods = 'CTRL|SHIFT', action = act.PromptInputLine {
+        description = wezterm.format {
+            { Attribute = { Intensity = 'Bold' } },
+            { Foreground = { Color = C_HL_1 } },
+            { Text = 'Enter name for new workspace:' },
+        },
+        action = wezterm.action_callback(function(window, pane, line)
+            if line then
+                window:perform_action(
+                    act.SwitchToWorkspace {
+                        name = line,
+                    },
+                    pane
+                )
+            end
+        end),
+    }},
+
+
+    -- Delete workspace
+    { key = 'd', mods = 'CTRL|SHIFT', action = act.PromptInputLine {
+        description = wezterm.format {
+            { Attribute = { Intensity = 'Bold' } },
+            { Foreground = { Color = C_HL_2 } },
+            { Text = 'Enter name of workspace to delete:' },
+        },
+        action = wezterm.action_callback(function(window, pane, line)
+            if line then
+                window:perform_action(
+                    act.RemoveWorkspace(line),
+                    pane
+                )
+            end
+        end),
+    }},
+
+    -- Rename workspace
+    { key = 'r', mods = 'CTRL|SHIFT', action = wezterm.action.PromptInputLine({
+        description = "Enter new name for workspace",
+        action = wezterm.action_callback(function(window, pane, line)
+            if line then
+                wezterm.mux.rename_workspace(wezterm.mux.get_active_workspace(), line)
+                resurrect.state_manager.save_state(workspace_state.get_workspace_state())
+            end
+        end),
+        }),
+    },
+
     -- Switch workspace
     {
         key = "s",
@@ -310,6 +372,14 @@ config.keys = {
     },
 
     -- Saving workspace
+    {
+        key = "s",
+        mods = "CTRL",
+        action = wezterm.action_callback(function(win, pane)
+            resurrect.state_manager.save_state(resurrect.workspace_state.get_workspace_state())
+            resurrect.window_state.save_window_action()
+        end),
+    },
     {
         key = "w",
         mods = "LEADER",
@@ -327,18 +397,10 @@ config.keys = {
         mods = "LEADER",
         action = resurrect.tab_state.save_tab_action(),
     },
-    {
-        key = "s",
-        mods = "CTRL",
-        action = wezterm.action_callback(function(win, pane)
-            resurrect.state_manager.save_state(resurrect.workspace_state.get_workspace_state())
-            resurrect.window_state.save_window_action()
-        end),
-    },
 
     -- Loading workspace
     {
-        key = "r",
+        key = "l",
         mods = "LEADER",
         action = wezterm.action_callback(function(win, pane)
             resurrect.fuzzy_loader.fuzzy_load(win, pane, function(id, label)
