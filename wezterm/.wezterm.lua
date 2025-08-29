@@ -10,44 +10,6 @@ config.default_prog = { "/bin/zsh" }
 
 -- === Plugin Configuration ===
 
--- Add entries in command palette for renaming and switching workspaces
-wezterm.on("augment-command-palette", function(window, pane)
-    local workspace_state = resurrect.workspace_state
-    return {
-        {
-        brief = "Window | Workspace: Switch Workspace",
-        icon = "md_briefcase_arrow_up_down",
-        action = workspace_switcher.switch_workspace(),
-        },
-        {
-        brief = "Window | Workspace: Rename Workspace",
-        icon = "md_briefcase_edit",
-        action = wezterm.action.PromptInputLine({
-            description = "Enter new name for workspace",
-            action = wezterm.action_callback(function(window, pane, line)
-            if line then
-                wezterm.mux.rename_workspace(wezterm.mux.get_active_workspace(), line)
-                resurrect.state_manager.save_state(workspace_state.get_workspace_state())
-            end
-            end),
-        }),
-        },
-        {
-        brief = 'Rename tab',
-        icon = 'md_rename_box',
-        action = wezterm.action.PromptInputLine {
-            description = 'Enter new name for tab',
-            initial_value = 'My Tab Name',
-            action = wezterm.action_callback(function(window, pane, line)
-            if line then
-                window:active_tab():set_title(line)
-            end
-            end),
-        },
-        },
-    }
-end)
-
 -- loads the state whenever I create a new workspace
 wezterm.on("smart_workspace_switcher.workspace_switcher.created", function(window, path, label)
     local workspace_state = resurrect.workspace_state
@@ -347,6 +309,10 @@ config.keys = {
         end),
         }),
     },
+
+    -- WORKING WORKSPACE SWITCHER
+    { key = '9', mods = 'ALT', action = act.ShowLauncherArgs { flags = 'FUZZY|WORKSPACES' } },
+
 
     -- Switch workspace
     {

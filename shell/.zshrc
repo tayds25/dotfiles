@@ -109,10 +109,10 @@ export PATH="$PATH:/var/lib/flatpak/exports/bin:$HOME/.local/share/flatpak/expor
 export PATH="$PATH:$HOME/.spicetify:/opt/yazi"
 
 # Neovim
-export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+# export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 
 # opencode
-export PATH=/home/tayshaunds/.opencode/bin:$PATH
+export PATH=$HOME/.opencode/bin:$PATH
 
 # =============================================================================
 # LS COLORS & GREP COLORS

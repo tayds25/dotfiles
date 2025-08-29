@@ -676,7 +676,7 @@ export NVM_DIR="$HOME/.config/nvm"
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
-export PATH=$PATH:/home/tayshaunds/.spicetify
+export PATH=$PATH:$HOME/.spicetify
 export PATH=$PATH:/opt/yazi
 
 function y() {
