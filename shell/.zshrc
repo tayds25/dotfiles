@@ -109,7 +109,7 @@ export PATH="$PATH:/var/lib/flatpak/exports/bin:$HOME/.local/share/flatpak/expor
 export PATH="$PATH:$HOME/.spicetify:/opt/yazi"
 
 # Neovim
-# export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+export PATH="$HOME/neovim/bin:$PATH"
 
 # opencode
 export PATH=$HOME/.opencode/bin:$PATH
