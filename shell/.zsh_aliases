@@ -57,6 +57,7 @@ alias ....='cd ../../..'                   # Go up three directories
 alias .....='cd ../../../..'               # Go up four directories
 alias bd='cd "$OLDPWD"'                    # Go to previous directory
 alias home='cd ~'                          # Go to home directory
+alias dl='cd Downloads/'                   # Go to downloads directory
 
 # System information & monitoring
 alias ps='ps auxf'                         # Enhanced process list

@@ -28,3 +28,9 @@
   Output = ""
   Tag = []
   command = "apt-cache search . | fzf --preview 'apt-cache show {1}'"
+
+[[Snippets]]
+  Description = "Check System Information"
+  Output = ""
+  Tag = []
+  command = "inxi -b"
