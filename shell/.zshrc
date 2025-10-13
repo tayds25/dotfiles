@@ -114,6 +114,9 @@ export PATH="$HOME/neovim/bin:$PATH"
 # opencode
 export PATH=$HOME/.opencode/bin:$PATH
 
+# SQL
+export PATH="$PATH:/opt/mssql-tools18/bin"
+
 # =============================================================================
 # LS COLORS & GREP COLORS
 # =============================================================================
