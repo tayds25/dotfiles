@@ -34,3 +34,15 @@
   Output = ""
   Tag = []
   command = "inxi -b"
+
+[[Snippets]]
+  Description = "Firefly III Backup"
+  Output = ""
+  Tag = []
+  command = "bash firefly-iii-backuper.sh backup ~/firefly-iii_backups/$(date '+%F').tar"
+
+[[Snippets]]
+  Description = "Firefly III Restore"
+  Output = ""
+  Tag = []
+  command = "bash firefly-iii-backuper.sh restore ~/firefly-iii_backups/<YYYY-MM-DD>.tar"
