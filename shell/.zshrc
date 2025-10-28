@@ -262,6 +262,9 @@ fi
 # Fzf and Zsh
 [ -f ~/dotfiles/shell/.fzf.zsh ] && source ~/dotfiles/shell/.fzf.zsh
 
+# Navi Cheatsheet
+eval "$(navi widget zsh)"
+
 
 # =============================================================================
 # ZSH COMPLETION SYSTEM

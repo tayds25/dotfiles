@@ -1,0 +1,46 @@
+% system
+# Configure FastFetch
+micro ~/.config/fastfetch/config.jsonc
+
+# Set brightness for monitor (value 0–1)
+xrandr --output DisplayPort-1 --brightness <0-1>
+
+# Check system information
+inxi -b
+
+
+% asus
+# ASUS Control Options
+asusctl --help
+
+# Manage ASUS GPU
+supergfxctl -h
+
+
+% packages
+# Find packages interactively with fzf
+apt-cache search . | fzf --preview 'apt-cache show {1}'
+
+
+% firefly
+# Firefly III Backup
+bash firefly-iii-backuper.sh backup ~/firefly-iii_backups/$(date '+%F').tar
+
+# Firefly III Restore
+bash firefly-iii-backuper.sh restore ~/firefly-iii_backups/<YYYY-MM-DD>.tar
+
+
+% docker
+# Start Docker service
+sudo systemctl start docker
+
+# Check Docker service status
+sudo systemctl status docker
+
+# Stop Docker service
+sudo systemctl stop docker
+
+
+% misc
+# Community-driven cheat sheets
+curl cheat.sh/<command>
