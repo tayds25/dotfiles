@@ -3,6 +3,9 @@
 # ZSH Configuration
 # =============================================================================
 
+# Dotfiles location
+export DOTFILES="/mnt/d/dev/dotfiles"
+
 # =============================================================================
 # INITIAL SETUP & SYSTEM INFO
 # =============================================================================
@@ -81,6 +84,23 @@ export HISTTIMEFORMAT="%F %T"
 [[ ! -d "$XDG_STATE_HOME/zsh" ]] && mkdir -p "$XDG_STATE_HOME/zsh"
 
 # =============================================================================
+# WSL-SPECIFIC CONFIGURATION
+# =============================================================================
+
+# Detect if running in WSL
+if grep -qEi "(Microsoft|WSL)" /proc/version &> /dev/null; then
+    export IS_WSL=true
+
+    # Windows home directory shortcut
+    export WINHOME="/mnt/c/Users/Tayshaun"
+
+    # Fix for Windows path in WSL (optional - removes Windows paths from PATH)
+    # export PATH=$(echo "$PATH" | tr ':' '\n' | grep -v "/mnt/c" | tr '\n' ':' | sed 's/:$//')
+else
+    export IS_WSL=false
+fi
+
+# =============================================================================
 # ENVIRONMENT VARIABLES
 # =============================================================================
 
@@ -146,7 +166,7 @@ export FZF_DEFAULT_OPTS="--ansi --height 80% --layout=reverse --border \
 # =============================================================================
 
 # Source aliases and functions from separate file
-[[ -f "$HOME/dotfiles/shell/.zsh_aliases" ]] && source "$HOME/dotfiles/shell/.zsh_aliases"
+[[ -f "$DOTFILES/shell/.zsh_aliases" ]] && source "$DOTFILES/shell/.zsh_aliases"
 
 # =============================================================================
 # ESSENTIAL ZSH PLUGINS
@@ -260,11 +280,12 @@ if command -v starship &> /dev/null; then
 fi
 
 # Fzf and Zsh
-[ -f ~/dotfiles/shell/.fzf.zsh ] && source ~/dotfiles/shell/.fzf.zsh
+[ -f $DOTFILES/shell/.fzf.zsh ] && source $DOTFILES/shell/.fzf.zsh
 
 # Navi Cheatsheet
 eval "$(navi widget zsh)"
 
+export PATH="$HOME/.fzf/bin:$HOME/.cargo/bin:$PATH"
 
 # =============================================================================
 # ZSH COMPLETION SYSTEM
@@ -276,9 +297,6 @@ compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
 
 # Create cache directory if it doesn't exist
 [[ ! -d "$XDG_CACHE_HOME/zsh" ]] && mkdir -p "$XDG_CACHE_HOME/zsh"
-
-# Fzf integration
-source <(fzf --zsh)
 
 # Save fzf history
 HISTFILE=~/.zsh_history
@@ -322,3 +340,5 @@ bindkey '^[[F' end-of-line                     # End key
 # Accept autosuggestion
 bindkey '^ ' autosuggest-accept                # Ctrl+Space
 bindkey '^[[Z' reverse-menu-complete           # Shift+Tab for reverse completion
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

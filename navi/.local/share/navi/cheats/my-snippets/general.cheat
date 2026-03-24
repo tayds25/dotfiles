@@ -23,6 +23,12 @@ apt-cache search . | fzf --preview 'apt-cache show {1}'
 
 
 % firefly
+# Firefly III Start
+docker compose up -d
+
+# Firefly III Stop
+docker compose down
+
 # Firefly III Backup
 bash firefly-iii-backuper.sh backup ~/firefly-iii_backups/$(date '+%F').tar
 

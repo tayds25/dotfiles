@@ -2,18 +2,44 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
--- Load Plugins
-local resurrect = wezterm.plugin.require("https://github.com/MLFlexer/resurrect.wezterm")
-local workspace_switcher = wezterm.plugin.require("https://github.com/MLFlexer/smart_workspace_switcher.wezterm")
+-- === Shell Configuration ===
+config.default_prog = {
+    "wsl.exe",
+    "--cd", "~",
+    "--exec", "/bin/zsh", "-l"
+}
 
-config.default_prog = { "/bin/zsh" }
+-- === Lazy Plugin Loading ===
+local resurrect = nil
+local workspace_switcher = nil
+local plugins_loaded = false
 
--- === Plugin Configuration ===
+local function ensure_plugins_loaded()
+    if plugins_loaded then return end
 
--- loads the state whenever I create a new workspace
+    local ok1, res1 = pcall(function()
+        return wezterm.plugin.require("https://github.com/MLFlexer/resurrect.wezterm")
+    end)
+    if ok1 then
+        resurrect = res1
+    end
+
+    local ok2, res2 = pcall(function()
+        return wezterm.plugin.require("https://github.com/MLFlexer/smart_workspace_switcher.wezterm")
+    end)
+    if ok2 then
+        workspace_switcher = res2
+    end
+
+    plugins_loaded = true
+end
+
+-- === Plugin Event Handlers ===
 wezterm.on("smart_workspace_switcher.workspace_switcher.created", function(window, path, label)
-    local workspace_state = resurrect.workspace_state
+    ensure_plugins_loaded()
+    if not (resurrect and workspace_switcher) then return end
 
+    local workspace_state = resurrect.workspace_state
     workspace_state.restore_workspace(resurrect.state_manager.load_state(label, "workspace"), {
         window = window,
         relative = true,
@@ -22,13 +48,14 @@ wezterm.on("smart_workspace_switcher.workspace_switcher.created", function(windo
     })
 end)
 
--- Saves the state whenever I select a workspace
 wezterm.on("smart_workspace_switcher.workspace_switcher.selected", function(window, path, label)
+    ensure_plugins_loaded()
+    if not (resurrect and workspace_switcher) then return end
+
     local workspace_state = resurrect.workspace_state
     resurrect.state_manager.save_state(workspace_state.get_workspace_state())
 end)
 
--- Add the selected path to the right status bar when choosing a workspace
 wezterm.on("smart_workspace_switcher.workspace_switcher.chosen", function(window, workspace)
     local gui_win = window:gui_window()
     local base_path = string.gsub(workspace, "(.*[/\\])(.*)", "%2")
@@ -37,23 +64,6 @@ wezterm.on("smart_workspace_switcher.workspace_switcher.chosen", function(window
         { Text = base_path .. "  " },
     }))
 end)
-wezterm.on("smart_workspace_switcher.workspace_switcher.created", function(window, workspace)
-    local gui_win = window:gui_window()
-    local base_path = string.gsub(workspace, "(.*[/\\])(.*)", "%2")
-    gui_win:set_right_status(wezterm.format({
-        { Foreground = { Color = "green" } },
-        { Text = base_path .. "  " },
-    }))
-end)
-
--- Workspace Formatter
-workspace_switcher.workspace_formatter = function(label)
-    return wezterm.format({
-        { Attribute = { Italic = true } },
-        { Foreground = { Color = "#a7c080" } },
-        { Text = "󱂬: " .. label },
-    })
-end
 
 -- === Appearance & Theme ===
 config.window_background_opacity = 0.9
@@ -68,7 +78,7 @@ config.window_padding = {
 local selected_scheme = "Everforest Dark Hard"
 local everforest_scheme = {
     foreground = '#d3c6aa',
-    background = '#272e33',
+    background = '#191d20',
     cursor_bg = '#d3c6aa',
     cursor_fg = '#2e383c',
     cursor_border = '#d3c6aa',
@@ -164,7 +174,7 @@ end)
 
 -- === Font ===
 config.font = wezterm.font_with_fallback { 'JetBrainsMono Nerd Font' }
-config.font_size = 11.0
+config.font_size = 10.0
 
 -- === Cursor ===
 config.default_cursor_style = 'BlinkingBar'
@@ -234,7 +244,7 @@ config.keys = {
     { key = '0', mods = 'CTRL', action = act.ResetFontSize },
 
     -- === Copy/Paste & Search ===
-    -- Copy/Paste (standard Linux shortcuts)
+    -- Copy/Paste
     { key = 'c', mods = 'CTRL|SHIFT', action = act.CopyTo 'Clipboard' },
     { key = 'v', mods = 'CTRL|SHIFT', action = act.PasteFrom 'Clipboard' },
     -- Search
@@ -256,22 +266,34 @@ config.keys = {
     { key = 'Home', mods = 'SHIFT', action = act.ScrollToTop },
     { key = 'End', mods = 'SHIFT', action = act.ScrollToBottom },
 
-    -- === Workspace Management ===
-
-    -- Switch workspace
+    -- Workspace switcher
     {
         key = "s",
         mods = "LEADER",
-        action = workspace_switcher.switch_workspace(),
+        action = wezterm.action_callback(function(window, pane)
+            ensure_plugins_loaded()
+            if workspace_switcher then
+                window:perform_action(workspace_switcher.switch_workspace(), pane)
+            end
+        end)
     },
-    {
+}
+
+-- === Workspace Management ===
+if resurrect and workspace_switcher then
+    table.insert(config.keys, {
+        key = "s",
+        mods = "LEADER",
+        action = workspace_switcher.switch_workspace(),
+    })
+    table.insert(config.keys, {
         key = "S",
         mods = "LEADER",
         action = workspace_switcher.switch_to_prev_workspace(),
-    },
+    })
 
     -- Save workspace state
-    {
+    table.insert(config.keys, {
         key = "s",
         mods = "CTRL",
         action = wezterm.action_callback(function(win, pane)
@@ -279,27 +301,27 @@ config.keys = {
             resurrect.window_state.save_window_action()
             resurrect.tab_state.save_tab_action()
         end),
-    },
-    {
+    })
+    table.insert(config.keys, {
         key = "w",
         mods = "ALT",
         action = wezterm.action_callback(function(win, pane)
             resurrect.state_manager.save_state(resurrect.workspace_state.get_workspace_state())
         end),
-    },
-    {
+    })
+    table.insert(config.keys, {
         key = "W",
         mods = "ALT",
         action = resurrect.window_state.save_window_action(),
-    },
-    {
+    })
+    table.insert(config.keys, {
         key = "T",
         mods = "ALT",
         action = resurrect.tab_state.save_tab_action(),
-    },
+    })
 
     -- Load workspace state
-    {
+    table.insert(config.keys, {
         key = "l",
         mods = "LEADER",
         action = wezterm.action_callback(function(win, pane)
@@ -326,10 +348,10 @@ config.keys = {
                 end
             end)
         end),
-    },
+    })
 
     -- Delete workspace state
-    {
+    table.insert(config.keys, {
         key = "d",
         mods = "LEADER",
         action = wezterm.action_callback(function(win, pane)
@@ -343,10 +365,10 @@ config.keys = {
             is_fuzzy = true,
             })
         end),
-    },
+    })
 
     -- Rename workspace
-    {
+    table.insert(config.keys, {
         key = "r",
         mods = "LEADER",
         action = wezterm.action.PromptInputLine({
@@ -354,11 +376,11 @@ config.keys = {
             action = wezterm.action_callback(function(window, pane, line)
                 if line then
                     wezterm.mux.rename_workspace(wezterm.mux.get_active_workspace(), line)
-                    resurrect.state_manager.save_state(workspace_state.get_workspace_state())
+                    resurrect.state_manager.save_state(resurrect.workspace_state.get_workspace_state())
                 end
             end),
         }),
-    },
-}
+    })
+end
 
 return config

@@ -8,6 +8,47 @@
 # SYSTEM-SPECIFIC ALIASES
 # =============================================================================
 
+# =============================================================================
+# WSL-SPECIFIC ALIASES & OVERRIDES
+# =============================================================================
+
+if [[ "$IS_WSL" == "true" ]]; then
+    # Open Windows Explorer in current directory
+    alias explorer='explorer.exe .'
+    alias exp='explorer.exe .'
+
+    # Open VS Code from WSL
+    alias code='code .'
+
+    # Access Windows drives easily
+    alias cdc='cd /mnt/c'
+    alias cdd='cd /mnt/d'
+    alias cddev='cd /mnt/d/dev'
+    alias cdwin='cd /mnt/c/Users/Tayshaun'
+
+    # Windows clipboard integration
+    alias pbcopy='clip.exe'
+    alias pbpaste='powershell.exe -command "Get-Clipboard"'
+
+    # Override system-specific aliases that won't work in WSL
+    alias shutdown='echo "Use: wsl.exe --shutdown from PowerShell"'
+    alias rebootsafe='echo "Restart WSL from PowerShell: wsl.exe --shutdown"'
+    alias rebootforce='echo "Restart WSL from PowerShell: wsl.exe --shutdown"'
+
+    # Use Windows Nemo replacement (Windows Explorer)
+    alias nemo='explorer.exe'
+
+    alias fd=fdfind
+
+    # Override file manager function for WSL
+    fzfdir() {
+        local selected_file=$(fzf --height 80%)
+        if [[ -n "$selected_file" ]]; then
+            explorer.exe "$(dirname "$selected_file")" & disown
+        fi
+    }
+fi
+
 # Web development
 alias web='cd /var/www/html'
 

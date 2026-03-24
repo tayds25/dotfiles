@@ -1,7 +1,13 @@
 # Setup fzf
 # ---------
-if [[ ! "$PATH" == */home/tayshaunds/.fzf/bin* ]]; then
-  PATH="${PATH:+${PATH}:}/home/tayshaunds/.fzf/bin"
+if [[ ! "$PATH" == *$HOME/.fzf/bin* ]]; then
+  PATH="${PATH:+${PATH}:}$HOME/.fzf/bin"
 fi
 
-source <(fzf --zsh)
+# Auto-completion
+# ---------------
+[[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.zsh" 2> /dev/null
+
+# Key bindings
+# ------------
+source "$HOME/.fzf/shell/key-bindings.zsh"

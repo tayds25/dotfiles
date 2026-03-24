@@ -389,8 +389,4 @@ desc = "Paste into the hovered directory or CWD"
 
 [[mgr.prepend_keymap]]
 on  = "y"
-run = [ 'shell -- echo "$@" | xclip -i -selection clipboard -t text/uri-list', "yank" ]
-
-[[mgr.prepend_keymap]]
-on  = "<C-d>"
-run = 'shell -- dragon -x -i -T "$1"'
+run = [ 'shell -- printf "%s\n" "$@" | clip.exe', "yank" ]
